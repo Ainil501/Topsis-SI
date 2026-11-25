@@ -31,6 +31,14 @@ body {
   background-color: #04AA6D;
   color: white;
 }
+
+table, th, td{
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th,td{
+  padding: 8px;
+}
 </style>
 </head>
 <body>
