@@ -5,15 +5,26 @@ $conn = mysqli_connect("localhost","root","","si_database");
 $result = mysqli_query($conn, "SELECT *, EXISTS(select 1 FROM tabel_daftar d WHERE d.id_pekerja = p.id_pekerja) status FROM tabel_pekerja p");
 
 if(isset($_POST['status'])){
-  $id = $_POST['status'];
-  if(mysqli_num_rows(mysqli_query($conn,"SELECT * FROM tabel_daftar WHERE id_pekerja = " . $id))>0){
-    mysqli_query($conn, "DELETE FROM tabel_daftar WHERE id_pekerja = " . $id);
-  }else{
-    $id_daftar = (mysqli_fetch_assoc(mysqli_query($conn, "SELECT MAX(id_daftar) id FROM tabel_daftar"))['id'] ?? 0 )+ 1;
-    mysqli_query($conn, "INSERT INTO tabel_daftar VALUES (" . $id_daftar . ", " . $id . ")");
-  }
-  header("Location: index.php");
-  exit;
+    $id = (int) $_POST['status'];
+
+    if(isset($_POST['aksi'])){
+        $id_daftar = (mysqli_fetch_assoc(mysqli_query($conn,
+            "SELECT MAX(id_daftar) AS id FROM tabel_daftar"
+        ))['id'] ?? 0) + 1;
+
+        mysqli_query($conn,
+            "INSERT INTO tabel_daftar (id_daftar, id_pekerja)
+             VALUES ($id_daftar, $id)"
+        );
+
+    }else{
+        mysqli_query($conn,
+            "DELETE FROM tabel_daftar WHERE id_pekerja = $id"
+        );
+    }
+
+    header("Location: index.php");
+    exit;
 }
 ?>
 
@@ -41,9 +52,13 @@ if(isset($_POST['status'])){
         <td><?= $r['skill']?></td>
         <td><?= $r['usia']?></td>
         <td><?= $r['karakter']?></td>
-        <td><form method="post">
-          <input type="checkbox" name="status" onchange="this.form.submit()" value="<?php echo $r['id_pekerja']; ?>" <?= $r['status'] ? "checked" : ""?>>
-        </form></td>
+        <td>
+          <form method="post">
+              <input type="hidden" name="status" value="<?= $r['id_pekerja'] ?>">
+              <input type="checkbox" name="aksi" onchange="this.form.submit()"
+                  <?= $r['status'] ? "checked" : "" ?>>
+          </form>
+        </td>
       </tr>
       <?php endwhile;?>
 
