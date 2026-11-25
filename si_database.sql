@@ -40,24 +40,13 @@ CREATE TABLE `tabel_bobot` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tabel_daftar`
---
-
-CREATE TABLE `tabel_daftar` (
-  `id_daftar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_pekerja` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `tabel_nilai`
 --
 
 CREATE TABLE `tabel_nilai` (
   `id_nilai` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `id_bobot` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_daftar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_pekerja` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `r_pendidikan` decimal(10,6) DEFAULT NULL,
   `r_pengalaman` decimal(10,6) DEFAULT NULL,
   `r_skill` decimal(10,6) DEFAULT NULL,
@@ -87,7 +76,8 @@ CREATE TABLE `tabel_pekerja` (
   `pengalaman` int NOT NULL,
   `skill` int NOT NULL,
   `usia` int NOT NULL,
-  `karakter` int NOT NULL
+  `karakter` int NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -101,20 +91,13 @@ ALTER TABLE `tabel_bobot`
   ADD PRIMARY KEY (`id_bobot`);
 
 --
--- Indexes for table `tabel_daftar`
---
-ALTER TABLE `tabel_daftar`
-  ADD PRIMARY KEY (`id_daftar`),
-  ADD KEY `fk_daftar_pekerja` (`id_pekerja`);
-
---
 -- Indexes for table `tabel_nilai`
 --
 ALTER TABLE `tabel_nilai`
   ADD PRIMARY KEY (`id_nilai`),
-  ADD UNIQUE KEY `uq_bobot_daftar` (`id_bobot`,`id_daftar`),
+  ADD UNIQUE KEY `uq_bobot_pekerja` (`id_bobot`,`id_pekerja`),
   ADD KEY `fk_nilai_bobot` (`id_bobot`),
-  ADD KEY `fk_nilai_daftar` (`id_daftar`);
+  ADD KEY `fk_nilai_pekerja` (`id_pekerja`);
 
 --
 -- Indexes for table `tabel_pekerja`
@@ -127,17 +110,11 @@ ALTER TABLE `tabel_pekerja`
 --
 
 --
--- Constraints for table `tabel_daftar`
---
-ALTER TABLE `tabel_daftar`
-  ADD CONSTRAINT `fk_daftar_pekerja` FOREIGN KEY (`id_pekerja`) REFERENCES `tabel_pekerja` (`id_pekerja`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
---
 -- Constraints for table `tabel_nilai`
 --
 ALTER TABLE `tabel_nilai`
   ADD CONSTRAINT `fk_nilai_bobot` FOREIGN KEY (`id_bobot`) REFERENCES `tabel_bobot` (`id_bobot`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_nilai_daftar` FOREIGN KEY (`id_daftar`) REFERENCES `tabel_daftar` (`id_daftar`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_nilai_pekerja` FOREIGN KEY (`id_pekerja`) REFERENCES `tabel_pekerja` (`id_pekerja`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
