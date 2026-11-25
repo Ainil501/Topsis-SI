@@ -45,12 +45,7 @@ CREATE TABLE `tabel_bobot` (
 
 CREATE TABLE `tabel_daftar` (
   `id_daftar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_pekerja` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `pendidikan` int NOT NULL,
-  `pengalaman` int NOT NULL,
-  `skill` int NOT NULL,
-  `usia` int NOT NULL,
-  `karakter` int NOT NULL
+  `id_pekerja` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -87,7 +82,12 @@ CREATE TABLE `tabel_nilai` (
 
 CREATE TABLE `tabel_pekerja` (
   `id_pekerja` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_pekerja` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
+  `nama_pekerja` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pendidikan` int NOT NULL,
+  `pengalaman` int NOT NULL,
+  `skill` int NOT NULL,
+  `usia` int NOT NULL,
+  `karakter` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
