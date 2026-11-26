@@ -1,37 +1,55 @@
-<?php include 'header.php'; ?>
 <?php
 // =========================================================================
-// TEMPAT LOGIKA PHP (BACKEND)
-// 1. Koneksi database: $conn = mysqli_connect("localhost", "root", "", "si_database");
-// 2. Logika Tambah / Edit Bobot: if (isset($_POST['simpan_bobot'])) { ... }
-// 3. Logika Perhitungan TOPSIS: if (isset($_POST['hitung_topsis'])) { ... }
+// KERANGKA LOGIKA PHP (BACKEND TOPSIS)
 // =========================================================================
 
-// Data dummy sementara Tabel Pekerja (nantinya ambil dari tabel_pekerja yang ada di tabel_daftar)
+// 1. KONEKSI DATABASE (samakan dengan index.php)
+// $conn = mysqli_connect("localhost", "root", "", "si_database");
+
+// 2. AMBIL DATA PEKERJA YANG TERDAFTAR (dari tabel_pekerja & tabel_daftar)
+// $data_pekerja = [];
+// $query_pekerja = mysqli_query($conn, "SELECT p.* FROM tabel_pekerja p JOIN tabel_daftar d ON p.id_pekerja = d.id_pekerja");
+// while ($row = mysqli_fetch_assoc($query_pekerja)) {
+//     $data_pekerja[] = $row;
+// }
+
+// Data dummy sementara (hapus bagian ini jika query database di atas sudah aktif)
 $data_pekerja = [
     ['id_pekerja' => 1, 'nama_pekerja' => 'Imam', 'pendidikan' => 5, 'pengalaman' => 9, 'skill' => 20, 'usia' => 20, 'karakter' => 1],
     ['id_pekerja' => 2, 'nama_pekerja' => 'Nira', 'pendidikan' => 4, 'pengalaman' => 12, 'skill' => 19, 'usia' => 20, 'karakter' => 1],
     ['id_pekerja' => 3, 'nama_pekerja' => 'Erlangga', 'pendidikan' => 6, 'pengalaman' => 14, 'skill' => 16, 'usia' => 20, 'karakter' => 1],
 ];
 
-// Data dummy sementara dari tabel_bobot (untuk simulasi pilihan & tombol Edit Bobot)
-$daftar_bobot = [
-    [
-        'id_bobot' => 1,
-        'bpendidikan' => 4,
-        'bpengalaman' => 4,
-        'bskill' => 3,
-        'busia' => 3,
-        'bkarakter' => 4,
-    ],
-];
+// Kumpulkan semua id_pekerja terpilih untuk dikirim ke detail.php via Method GET
+// Hasil contoh: "1,2,3"
+$id_terpilih = implode(',', array_column($data_pekerja, 'id_pekerja'));
 
-// ID bobot yang sedang dipilih (default mengambil data pertama jika tersedia)
-$bobot_aktif = !empty($daftar_bobot) ? $daftar_bobot[0] : null;
-
-// Array kosong default untuk Tabel Hasil (diisi setelah tombol Hitung diproses)
-// Contoh struktur isi: ['nama' => 'Imam', 'preferensi' => '0.575476']
+// Array default untuk Tabel Hasil (kosong sebelum tombol Hitung ditekan)
 $data_hasil = [];
+
+// 3. PROSES PERHITUNGAN TOPSIS SAAT TOMBOL HITUNG DITEKAN
+if (isset($_POST['hitung_topsis'])) {
+    /*
+     * // A. Ambil data bobot dari tabel_bobot
+     * // $q_bobot = mysqli_query($conn, "SELECT * FROM tabel_bobot LIMIT 1");
+     * // $bobot   = mysqli_fetch_assoc($q_bobot);
+     * // $w = [
+     * //     'pendidikan' => $bobot['bpendidikan'],
+     * //     'pengalaman' => $bobot['bpengalaman'],
+     * //     'skill'      => $bobot['bskill'],
+     * //     'usia'       => $bobot['busia'],
+     * //     'karakter'   => $bobot['bkarakter']
+     * // ];
+     *
+     * // B. Langkah 1: Hitung Pembagi & Matriks Normalisasi (r_ij = x_ij / akar(jumlah x_ij^2))
+     * // C. Langkah 2: Hitung Matriks Normalisasi Terbobot (y_ij = w_j * r_ij)
+     * // D. Langkah 3: Tentukan Solusi Ideal Positif (A+) & Solusi Ideal Negatif (A-)
+     * // E. Langkah 4: Hitung Jarak Solusi Ideal Positif (D+) & Negatif (D-)
+     * // F. Langkah 5: Hitung Nilai Preferensi (V_i = D- / (D- + D+))
+     * // G. Urutkan dari nilai preferensi terbesar ke terkecil dan isi ke $data_hasil
+     */
+}
+include 'header.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,245 +57,200 @@ $data_hasil = [];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/topsis.css">
+    <title>Topsis</title>
+    <style>
+        .container {
+            max-width: 1100px;
+            padding: 16px;
+        }
+
+        .section-box {
+            margin-bottom: 24px;
+        }
+
+        .container h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 20px;
+            line-height: 24px;
+            color: #333;
+        }
+
+        .container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .container th {
+            background-color: #333;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .kosong {
+            text-align: center;
+            padding: 20px;
+            color: #333;
+            font-style: italic;
+        }
+
+        .baris-bawah {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .kolom-hasil {
+            flex: 2;
+        }
+
+        .kolom-aksi {
+            flex: 1;
+            padding-top: 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .btn-hitung {
+            background-color: #04AA6D;
+            color: #ffffff;
+        }
+
+        .btn-hitung:hover {
+            opacity: 0.9;
+        }
+
+        .btn-detail {
+            background-color: #333;
+            color: #ffffff;
+        }
+
+        .btn-detail:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .baris-bawah {
+                flex-direction: column;
+            }
+
+            .kolom-hasil,
+            .kolom-aksi {
+                width: 100%;
+            }
+
+            .kolom-aksi {
+                padding-top: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="main-container">
-        <!-- =================================================================
-        BARIS ATAS: TABEL PEKERJA (KIRI) & ATUR BOBOT (KANAN)
-        ================================================================= -->
-        <div class="baris-atas">
-            <!-- KIRI: Tabel Pekerja -->
-            <div class="kolom-pekerja">
-                <h2>Tabel Pekerja</h2>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="text-center" style="width: 45px;">No</th>
-                                <th>Nama Pekerja</th>
-                                <th class="text-center">Pendidikan</th>
-                                <th class="text-center">Pengalaman</th>
-                                <th class="text-center">Skill</th>
-                                <th class="text-center">Usia</th>
-                                <th class="text-center">Karakter</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php // Tempat logika PHP: ganti $data_pekerja dengan hasil query SELECT dari database ?>
-                            <?php $no = 1; ?>
-                            <?php foreach ($data_pekerja as $p): ?>
-                            <tr>
-                                <td class="text-center">
-                                    <?= $no++; ?>
-                                </td>
-                                <td>
-                                    <?= htmlspecialchars($p['nama_pekerja']); ?>
-                                </td>
-                                <td class="text-center">
-                                    <?= $p['pendidikan']; ?>
-                                </td>
-                                <td class="text-center">
-                                    <?= $p['pengalaman']; ?>
-                                </td>
-                                <td class="text-center">
-                                    <?= $p['skill']; ?>
-                                </td>
-                                <td class="text-center">
-                                    <?= $p['usia']; ?>
-                                </td>
-                                <td class="text-center">
-                                    <?= $p['karakter']; ?>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- KANAN: Panel Bobot (Form muncul saat klik Tambah atau Edit) -->
-            <div class="kolom-bobot">
-                <h2>Atur Bobot</h2>
-                <div class="box-panel">
-                    <!-- Pilihan Data Bobot yang Tersedia -->
-                    <label for="pilih_bobot" style="font-size: 14px; font-weight: bold; display: block; margin-bottom: 6px;">
-                        Pilih Bobot Perhitungan:
-                    </label>
-                    <select id="pilih_bobot" class="select-bobot" onchange="sinkronBobotTerpilih()">
-                        <?php if (empty($daftar_bobot)): ?>
-                        <option value="">-- Belum ada data bobot --</option>
-                        <?php else: ?>
-                        <?php foreach ($daftar_bobot as $b): ?>
-                        <option value="<?= $b['id_bobot']; ?>" data-pendidikan="<?= $b['bpendidikan']; ?>" data-pengalaman="<?= $b['bpengalaman']; ?>" data-skill="<?= $b['bskill']; ?>" data-usia="<?= $b['busia']; ?>" data-karakter="<?= $b['bkarakter']; ?>">
-                            Bobot #
-                            <?= $b['id_bobot']; ?> (P:
-                            <?= $b['bpendidikan']; ?>, Pg:
-                            <?= $b['bpengalaman']; ?>, S:
-                            <?= $b['bskill']; ?>, U:
-                            <?= $b['busia']; ?>, K:
-                            <?= $b['bkarakter']; ?>)
-                        </option>
-                        <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
-                    <!-- Tombol Pemicu Munculnya Form Atur Bobot -->
-                    <div class="bobot-toolbar">
-                        <button type="button" class="btn btn-hijau" style="flex: 1;" onclick="bukaFormBobot('tambah')">
-                            + Tambah Bobot
-                        </button>
-                        <button type="button" class="btn btn-gelap" style="flex: 1;" onclick="bukaFormBobot('edit')">
-                            Edit Bobot
-                        </button>
-                    </div>
-                    <!-- Form Atur Bobot (Tersembunyi secara default) -->
-                    <div id="formBobotContainer" class="form-bobot-box">
-                        <div id="judulFormBobot" class="form-judul">Form Atur Bobot</div>
-                        <form method="POST" action="topsis.php">
-                            <!-- Penanda mode aksi ('tambah' atau 'edit') dan id_bobot untuk backend -->
-                            <input type="hidden" id="aksi_bobot" name="aksi_bobot" value="tambah">
-                            <input type="hidden" id="id_bobot" name="id_bobot" value="">
-                            <div class="form-row">
-                                <label for="bpendidikan">Pendidikan</label>
-                                <input type="number" id="bpendidikan" name="bpendidikan" step="any" min="0" required>
-                            </div>
-                            <div class="form-row">
-                                <label for="bpengalaman">Pengalaman</label>
-                                <input type="number" id="bpengalaman" name="bpengalaman" step="any" min="0" required>
-                            </div>
-                            <div class="form-row">
-                                <label for="bskill">Skill</label>
-                                <input type="number" id="bskill" name="bskill" step="any" min="0" required>
-                            </div>
-                            <div class="form-row">
-                                <label for="busia">Usia</label>
-                                <input type="number" id="busia" name="busia" step="any" min="0" required>
-                            </div>
-                            <div class="form-row">
-                                <label for="bkarakter">Karakter</label>
-                                <input type="number" id="bkarakter" name="bkarakter" step="any" min="0" required>
-                            </div>
-                            <!-- Tombol Batal & Simpan di pojok kanan bawah form -->
-                            <div class="form-footer">
-                                <button type="button" class="btn btn-batal" onclick="tutupFormBobot()">Batal</button>
-                                <button type="submit" name="simpan_bobot" class="btn btn-hijau">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <div class="container">
+
+        <!-- BAGIAN ATAS: TABEL PEKERJA -->
+        <div class="section-box">
+            <h2>Tabel Pekerja</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width: 50px;">No</th>
+                        <th>Nama Pekerja</th>
+                        <th class="text-center">Pendidikan</th>
+                        <th class="text-center">Pengalaman</th>
+                        <th class="text-center">Skill</th>
+                        <th class="text-center">Usia</th>
+                        <th class="text-center">Karakter</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $no = 1; ?>
+                    <?php foreach ($data_pekerja as $p): ?>
+                        <tr>
+                            <td class="text-center"><?= $no++; ?></td>
+                            <td><?= htmlspecialchars($p['nama_pekerja']); ?></td>
+                            <td class="text-center"><?= $p['pendidikan']; ?></td>
+                            <td class="text-center"><?= $p['pengalaman']; ?></td>
+                            <td class="text-center"><?= $p['skill']; ?></td>
+                            <td class="text-center"><?= $p['usia']; ?></td>
+                            <td class="text-center"><?= $p['karakter']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
-        <!-- =================================================================
-        BARIS BAWAH: TABEL HASIL (KIRI) & TOMBOL HITUNG / DETAIL (KANAN)
-        ================================================================= -->
-        <div class="baris-bawah">
+
+        <!-- BAGIAN BAWAH: TABEL HASIL (KIRI) & TOMBOL AKSI (KANAN) -->
+        <div class="section-box baris-bawah">
+
             <!-- KIRI: Tabel Hasil -->
             <div class="kolom-hasil">
                 <h2>Tabel Hasil</h2>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 50px;">No</th>
+                            <th>Nama</th>
+                            <th class="text-center">Preferensi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($data_hasil)): ?>
                             <tr>
-                                <th class="text-center" style="width: 55px;">No</th>
-                                <th>Nama</th>
-                                <th class="text-center">Preferensi</th>
+                                <td colspan="3" class="kosong">No Available</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <?php // Tempat logika PHP: tampilkan hasil perhitungan dari tabel_hasil ?>
-                            <?php if (empty($data_hasil)): ?>
-                            <tr>
-                                <td colspan="3" class="empty-row">No Available</td>
-                            </tr>
-                            <?php else: ?>
+                        <?php else: ?>
                             <?php $no_hasil = 1; ?>
                             <?php foreach ($data_hasil as $h): ?>
-                            <tr>
-                                <td class="text-center">
-                                    <?= $no_hasil++; ?>
-                                </td>
-                                <td>
-                                    <?= htmlspecialchars($h['nama']); ?>
-                                </td>
-                                <td class="text-center">
-                                    <?= htmlspecialchars($h['preferensi']); ?>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td class="text-center"><?= $no_hasil++; ?></td>
+                                    <td><?= htmlspecialchars($h['nama']); ?></td>
+                                    <td class="text-center"><?= htmlspecialchars($h['preferensi']); ?></td>
+                                </tr>
                             <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
-            <!-- KANAN: Dua Tombol Aksi Vertikal -->
+
+            <!-- KANAN: Tombol Hitung & Tombol Detail -->
             <div class="kolom-aksi">
-                <!-- 1. Tombol Hitung (Submit untuk memicu perhitungan TOPSIS) -->
-                <form method="POST" action="topsis.php" style="margin: 0;">
-                    <input type="hidden" id="hitung_id_bobot" name="id_bobot" value="<?= $bobot_aktif['id_bobot'] ?? ''; ?>">
-                    <button type="submit" name="hitung_topsis" class="btn btn-hijau btn-blok">
+                <!-- Tombol 1: Memicu perhitungan TOPSIS -->
+                <form method="POST" action="topsis.php">
+                    <button type="submit" name="hitung_topsis" class="btn btn-hitung">
                         Hitung
                     </button>
                 </form>
-                <!-- 2. Tombol Detail (Tautan langsung menuju detail.php) -->
-                <a id="linkDetail" href="detail.php<?= !empty($bobot_aktif['id_bobot']) ? '?id_bobot=' . $bobot_aktif['id_bobot'] : ''; ?>" class="btn btn-gelap btn-blok">
+
+                <!-- Tombol 2: Mengirim daftar id_pekerja ke detail.php lewat URL (Method GET) -->
+                <a href="detail.php<?= !empty($id_terpilih) ? '?id=' . htmlspecialchars($id_terpilih) : ''; ?>" class="btn btn-detail">
                     Detail
                 </a>
             </div>
+
         </div>
+
     </div>
-    <script>
-    // Menampilkan form bobot dalam mode 'tambah' atau 'edit'
-    function bukaFormBobot(mode) {
-        const container = document.getElementById('formBobotContainer');
-        const judul = document.getElementById('judulFormBobot');
-        const inputAksi = document.getElementById('aksi_bobot');
-        const inputId = document.getElementById('id_bobot');
-        const selectBobot = document.getElementById('pilih_bobot');
 
-        inputAksi.value = mode;
-
-        if (mode === 'tambah') {
-            judul.textContent = 'Tambah Data Bobot Baru';
-            inputId.value = '';
-            document.getElementById('bpendidikan').value = '';
-            document.getElementById('bpengalaman').value = '';
-            document.getElementById('bskill').value = '';
-            document.getElementById('busia').value = '';
-            document.getElementById('bkarakter').value = '';
-        } else if (mode === 'edit') {
-            const opsi = selectBobot.options[selectBobot.selectedIndex];
-            if (!opsi || !opsi.value) {
-                alert('Belum ada data bobot untuk diedit. Silakan tambah bobot baru terlebih dahulu.');
-                return;
-            }
-            judul.textContent = 'Edit Data Bobot #' + opsi.value;
-            inputId.value = opsi.value;
-            document.getElementById('bpendidikan').value = opsi.getAttribute('data-pendidikan');
-            document.getElementById('bpengalaman').value = opsi.getAttribute('data-pengalaman');
-            document.getElementById('bskill').value = opsi.getAttribute('data-skill');
-            document.getElementById('busia').value = opsi.getAttribute('data-usia');
-            document.getElementById('bkarakter').value = opsi.getAttribute('data-karakter');
-        }
-
-        container.classList.add('tampil');
-    }
-
-    // Menyembunyikan kembali form bobot
-    function tutupFormBobot() {
-        document.getElementById('formBobotContainer').classList.remove('tampil');
-    }
-
-    // Menyelaraskan id_bobot terpilih ke tombol Hitung dan tautan Detail
-    function sinkronBobotTerpilih() {
-        const selectBobot = document.getElementById('pilih_bobot');
-        const idTerpilih = selectBobot.value;
-        document.getElementById('hitung_id_bobot').value = idTerpilih;
-
-        const linkDetail = document.getElementById('linkDetail');
-        linkDetail.href = idTerpilih ? 'detail.php?id_bobot=' + encodeURIComponent(idTerpilih) : 'detail.php';
-    }
-    </script>
 </body>
 
 </html>
