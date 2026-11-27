@@ -33,8 +33,7 @@ CREATE TABLE `tabel_bobot` (
   `bpengalaman` int NOT NULL,
   `bskill` int NOT NULL,
   `busia` int NOT NULL,
-  `bkarakter` int NOT NULL,
-  `periode_bobot` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
+  `bkarakter` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
