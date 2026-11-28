@@ -19,7 +19,10 @@ function pastikanBobotTersedia($conn, $id_bobot = "BBT-01") {
     }
 
     if ($id_bobot === "BBT-01") {
+<<<<<<< HEAD
         $periode_bobot = date("Y"); // Sesuaikan bila format periode menggunakan tahun ajaran atau label tertentu
+=======
+>>>>>>> 0409fcc8d0dc0270f4ab6c7013d3c040c08c8143
         $b_pend = 5;
         $b_peng = 4;
         $b_skil = 4;
@@ -28,14 +31,23 @@ function pastikanBobotTersedia($conn, $id_bobot = "BBT-01") {
 
         $ins = mysqli_prepare(
             $conn,
+<<<<<<< HEAD
             "INSERT INTO tabel_bobot (id_bobot, periode_bobot, bpendidikan, bpengalaman, bskill, busia, bkarakter)
              VALUES (?, ?, ?, ?, ?, ?, ?)"
+=======
+            "INSERT INTO tabel_bobot (id_bobot, bpendidikan, bpengalaman, bskill, busia, bkarakter)
+             VALUES (?, ?, ?, ?, ?, ?)"
+>>>>>>> 0409fcc8d0dc0270f4ab6c7013d3c040c08c8143
         );
         if (!$ins) {
             return ['ok' => false, 'pesan' => "Gagal menyiapkan insert bobot default: " . mysqli_error($conn), 'bobot' => null];
         }
 
+<<<<<<< HEAD
         mysqli_stmt_bind_param($ins, "ssiiiii", $id_bobot, $periode_bobot, $b_pend, $b_peng, $b_skil, $b_usia, $b_kara);
+=======
+        mysqli_stmt_bind_param($ins, "siiiii", $id_bobot, $b_pend, $b_peng, $b_skil, $b_usia, $b_kara);
+>>>>>>> 0409fcc8d0dc0270f4ab6c7013d3c040c08c8143
         $ok = mysqli_stmt_execute($ins);
         mysqli_stmt_close($ins);
 
@@ -47,6 +59,7 @@ function pastikanBobotTersedia($conn, $id_bobot = "BBT-01") {
             'ok' => true,
             'pesan' => 'Bobot default BBT-01 dibuat otomatis.',
             'bobot' => [
+<<<<<<< HEAD
                 'id_bobot'      => $id_bobot,
                 'periode_bobot' => $periode_bobot,
                 'bpendidikan'   => $b_pend,
@@ -54,6 +67,14 @@ function pastikanBobotTersedia($conn, $id_bobot = "BBT-01") {
                 'bskill'        => $b_skil,
                 'busia'         => $b_usia,
                 'bkarakter'     => $b_kara,
+=======
+                'id_bobot'    => $id_bobot,
+                'bpendidikan' => $b_pend,
+                'bpengalaman' => $b_peng,
+                'bskill'      => $b_skil,
+                'busia'       => $b_usia,
+                'bkarakter'   => $b_kara,
+>>>>>>> 0409fcc8d0dc0270f4ab6c7013d3c040c08c8143
             ]
         ];
     }
@@ -216,7 +237,11 @@ function hitungTopsis($conn, $id_bobot = "BBT-01") {
         ];
     }
 
+<<<<<<< HEAD
     // Urutkan dari nilai preferensi tertinggi ke terendah (descending)
+=======
+    // Urutkan dari nilai preferensi ascending (bubble sort)
+>>>>>>> 0409fcc8d0dc0270f4ab6c7013d3c040c08c8143
     $n = count($perhitungan);
     for ($a = 0; $a < $n - 1; $a++) {
         for ($b = 0; $b < $n - $a - 1; $b++) {
@@ -232,7 +257,11 @@ function hitungTopsis($conn, $id_bobot = "BBT-01") {
         $perhitungan[$i]['ranking'] = $i + 1;
     }
 
+<<<<<<< HEAD
     // Simpan ke tabel_nilai
+=======
+    // Simpan
+>>>>>>> 0409fcc8d0dc0270f4ab6c7013d3c040c08c8143
     $sql_upsert = "INSERT INTO tabel_nilai (
                         id_nilai, id_bobot, id_pekerja,
                         r_pendidikan, r_pengalaman, r_skill, r_usia, r_karakter,
@@ -293,6 +322,7 @@ function hitungTopsis($conn, $id_bobot = "BBT-01") {
         $tipe_param = "sss" . str_repeat("d", 13) . "i";
 
         mysqli_stmt_bind_param(
+<<<<<<< HEAD
             $stmt_upsert,
             $tipe_param,
             $id_nilai,
@@ -313,6 +343,28 @@ function hitungTopsis($conn, $id_bobot = "BBT-01") {
             $pref_val,
             $rank_val
         );
+=======
+        	$stmt_upsert,
+		    $tipe_param,
+		    $id_nilai,
+		    $id_bobot,
+		    $id_pkj,
+		    $r_pend,
+		    $r_peng,
+		    $r_skil,
+		    $r_usia,
+		    $r_kara,
+		    $y_pend,
+		    $y_peng,
+		    $y_skil,
+		    $y_usia,
+		    $y_kara,
+		    $d_pos_val,
+		    $d_neg_val,
+		    $pref_val,
+		    $rank_val
+		);
+>>>>>>> 0409fcc8d0dc0270f4ab6c7013d3c040c08c8143
 
         if (!mysqli_stmt_execute($stmt_upsert)) {
             mysqli_rollback($conn);
